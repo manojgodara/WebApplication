@@ -1,0 +1,102 @@
+
+<project name="wall" basedir="." default="jar">
+
+    <property name="src.dir" value="${basedir}/src" />
+    <property name="test.dir" value="${basedir}/test" />
+    <property name="target.dir" value="${basedir}/target" />
+    <property name="classes.dir" value="${target.dir}/classes" />
+    <property name="test.classes.dir" value="${target.dir}/test_classes" />
+    <property name="snapshots.dir" value="${basedir}/../wallapp/war/WEB-INF/lib" />
+    <property name="3rdparty.dir" value="${basedir}/lib" />
+    <property name="ui_src.dir" value="${basedir}" />
+    <property name="junit_reports.dir" value="${basedir}/../../reports/junit" />
+    <property file="${basedir}/build.properties" />
+
+    <path id= "classes.classpath">
+        <pathelement location="${classes.dir}" />
+        <pathelement location="${3rdparty.dir}/javax.ws.rs-api.jar" />
+        <pathelement location="${3rdparty.dir}/spring-context.jar" />
+        <pathelement location="${3rdparty.dir}/spring-beans.jar" />
+        <pathelement location="${3rdparty.dir}/jackson-annotations.jar" />
+    </path>
+
+    <target name="clean">
+        <delete dir="${target.dir}" />
+    </target>
+
+    <target name="init">
+        <mkdir dir="${test.dir}" />
+        <mkdir dir="${target.dir}" />
+        <mkdir dir="${classes.dir}" />
+        <mkdir dir="${test.classes.dir}" />
+        <mkdir dir="${snapshots.dir}" />
+    </target>
+
+    <target name="compile_src">
+        <javac destdir="${classes.dir}" includeantruntime="${compile.antruntime}" failonerror="${compile.failonerror}" deprecation="${compile.deprecation}" debug="${compile.debug.flag}" verbose="${compile.verbose}" source="${compile.source}" target="${compile.target}" depend="${compile.depend}" fork="${compile.fork}" executable="${compile.executable}">
+
+            <src path="${src.dir}" />
+            <classpath>
+                <path refid="classes.classpath" />
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="compile_test" unless="skip.test">
+        <javac destdir="${test.classes.dir}" includeantruntime="${compile.antruntime}" failonerror="${compile.failonerror}" deprecation="${compile.deprecation}" debug="${compile.debug.flag}" verbose="${compile.verbose}" source="${compile.source}" target="${compile.target}" depend="${compile.depend}" fork="${compile.fork}" executable="${compile.executable}">
+
+            <src path="${test.dir}" />
+            <classpath>
+                <path refid="classes.classpath" />
+                <pathelement location="${3rdparty.dir}/prime-server-framework/framework-core-mock.jar" />
+                <pathelement path="${basedir}/../common/target/test_classes" />
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="compile" depends="init, compile_src, compile_test"/>
+
+    <target name="resources" depends="init">
+    </target>
+
+    <target name="build" depends="compile,resources">
+    </target>
+
+    <target name="test">
+        <mkdir dir="${junit_reports.dir}" />
+        <junit printsummary="${junit.printsummary}" haltonfailure="${junit.haltonfailure}" haltonerror="${junit.haltonerror}" showoutput="${junit.showoutput}" fork="true" forkmode="once" failureProperty="failed">
+            <classpath>
+                <path refid="classes.classpath" />
+                <pathelement path="{basedir}/../../.." />
+                <pathelement path="${test.classes.dir}" />
+                <pathelement path="${basedir}/../i18n/target/test_classes" />
+                <pathelement path="${basedir}/../common/target/test_classes" />
+                <pathelement path="${3rdparty.dir}/junit/junit.jar" />
+                <pathelement location="${3rdparty.dir}/prime-server-framework/framework-core-mock.jar" />
+            </classpath>
+            <formatter type="${unittest.output.type}" />
+            <batchtest fork="true" todir="${junit_reports.dir}">
+                <fileset dir="${test.classes.dir}" includes="${tests.patternset}" />
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="jar" depends="build" description="api">
+        <jar destfile="${snapshots.dir}/wall.jar" basedir="${classes.dir}" includes="${jar.includes},**/*.xsd" excludes="${jar.excludes}" >
+            <manifest>
+                <attribute name="Bundle-ManifestVersion" value="2" />
+                <attribute name="Bundle-Name" value="${ant.project.name}" />
+                <attribute name="Bundle-SymbolicName" value="${ant.project.name}" />
+                <attribute name="Bundle-Version" value="${release.version}" />
+                <attribute name="Import-Package" value="${bundle.importpackages}" />
+                <attribute name="Export-Package" value="${bundle.exportpackages}" />
+                <attribute name="Revision" value="${revision}"/>
+                <attribute name="Implementation-Version" value="${release.version}" />
+            </manifest>
+        </jar>
+    </target>
+
+
+
+</project>
+

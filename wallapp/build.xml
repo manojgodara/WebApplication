@@ -1,0 +1,42 @@
+<project name="wallapi" basedir="." default="war">
+
+	<property name="war.dir" value="${basedir}/war" />
+	<property name="war.lib.dir" value="${war.dir}/WEB-INF/lib" />
+	<property name="war.name" value="wallapi" />
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${3rdparty.dir}/ant/ant-contrib.jar" />
+		</classpath>
+	</taskdef>
+    
+	<target name="war">
+		<if>
+			<isset property="is.ear" />
+			<then>
+				<property name="excludes" value="${ear.excludes}" />
+			</then>
+			<else>
+				<property name="excludes" value="${jar.excludes}" />
+			</else>
+		</if>
+	    
+		<if>
+			<not>
+				<isset property="skip-jar" />
+			</not>
+			<then>
+				<jar destfile="${basedir}/../../apache-tomcat-7.0.85/webapps/${war.name}.war" basedir="${war.dir}" excludes="${excludes}">
+					<manifest>
+						<attribute name="Bundle-ManifestVersion" value="2" />
+						<attribute name="Bundle-Name" value="${ant.project.name}" />
+						<attribute name="Bundle-SymbolicName" value="${ant.project.name}" />
+						<attribute name="Bundle-Version" value="${release.version}" />
+						<attribute name="Import-Package" value="${bundle.importpackages}" />
+						<attribute name="Export-Package" value="${bundle.exportpackages}" />
+						<attribute name="Implementation-Version" value="${release.version}" />
+					</manifest>
+				</jar>
+			</then>
+		</if>
+	</target>
+</project>
