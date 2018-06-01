@@ -4,14 +4,14 @@ The task is to create a simple system ordering system for a fictional organisati
 # Rest Resources:
 
 ## To retrieve orders
-    GET wallapi/order/{orderId}
+    GET wallapi/restapi/order/{orderId}
         Response Body: (OrderApiEntity)entity 
         JSON Ex: {
           orderId: 1
           noOfBricks: 10
         }
 
-    GET wallapi/order?orders=1,2..
+    GET wallapi/restapi/order?orders=1,2..
     Response Body: List<OrderApiEntity> entities 
     JSON Ex: [
     {
@@ -21,7 +21,7 @@ The task is to create a simple system ordering system for a fictional organisati
     ]
 
 ## To submit new orders for bricks
-    POST wallapi/order
+    POST wallapi/restapi/order
     Request Body: (Long)noOfBricks
     Response Body: (OrderApiEntity)entity 
     JSON Ex: {
@@ -30,7 +30,7 @@ The task is to create a simple system ordering system for a fictional organisati
     }
 
 ## To update orders for bricks
-    PUT wallapi/order
+    PUT wallapi/restapi/order
     Request Body: (OrderApiEntity)entity 
     Response Body: (OrderApiEntity)updatedEntity 
 
@@ -40,7 +40,7 @@ The task is to create a simple system ordering system for a fictional organisati
     }
 
 ## To note when orders have been dispatched
-    PUT wallapi/order/fulfil
+    PUT wallapi/restapi/order/fulfil
     Reuest Body: (Long)orderId
     Response Body: (OrderApiEntity)entity 
     JSON Ex: {
